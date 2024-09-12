@@ -278,18 +278,19 @@ class _MainSectionState extends State<MainSection> {
                       style: TextStyle(
                         color: Color(0xFF324042),
                       ),
-                      textAlign: TextAlign.center,
+                      textAlign: TextAlign.justify,
                     ),
+
                     if (showResponse) // Conditionally render the response text
                       Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 10),
+                        padding: const EdgeInsets.symmetric(horizontal: 20.0),
                         child: Text(
                           responseText,
                           style: TextStyle(
                             color: Colors.white,
                             fontSize: 18,
                           ),
-                          textAlign: TextAlign.center,
+                          textAlign: TextAlign.justify,
                         ),
                       ),
                     if (_selectedImage != null) // Display the captured image
