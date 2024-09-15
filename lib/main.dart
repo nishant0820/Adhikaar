@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_tts/flutter_tts.dart';
+import 'package:webview_flutter/webview_flutter.dart';
 import 'package:image_picker/image_picker.dart';
 
 void main() {
@@ -222,7 +223,10 @@ class _MainSectionState extends State<MainSection> {
               leading: Icon(Icons.live_tv),
               title: Text('Live Stream'),
               onTap: () {
-                // Handle the Chat History button tap
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => LiveStreamPage()),
+                );
               },
             ),
             ListTile(
@@ -379,6 +383,31 @@ class _MainSectionState extends State<MainSection> {
             ),
           ],
         ),
+      ),
+    );
+  }
+}
+
+class LiveStreamPage extends StatefulWidget {
+  @override
+  _LiveStreamPageState createState() => _LiveStreamPageState();
+}
+
+class _LiveStreamPageState extends State<LiveStreamPage> {
+  late WebViewController _controller;
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Live Stream'),
+      ),
+      body: WebView(
+        initialUrl: 'https://www.youtube.com/',  // Insert your live stream URL here
+        javascriptMode: JavascriptMode.unrestricted,
+        onWebViewCreated: (WebViewController webViewController) {
+          _controller = webViewController;
+        },
       ),
     );
   }
