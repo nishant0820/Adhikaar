@@ -36,6 +36,8 @@ class _MainSectionState extends State<MainSection> {
   bool showResponse = false;
   bool userHasInteracted = false; // Flag to control initial content display
   List<Map<String, dynamic>> messages = []; // Store chat messages
+  int questionCount = 0; // Track the number of user questions
+  final int maxQuestions = 5; // Limit for user questions
 
   @override
   void initState() {
@@ -179,12 +181,13 @@ class _MainSectionState extends State<MainSection> {
 
   void handleSendButtonPress() async {
     final message = contentController.text;
-    if (message.isNotEmpty) {
+    if (message.isNotEmpty && questionCount < maxQuestions) {
       setState(() {
         userHasInteracted =
             true; // Hide initial content when user sends message
         addMessageToList(message, isUser: true); // Add user message to list
         contentController.clear();
+        questionCount++; // Increment the user question count
       });
 
       // Show "Thinking..." after 2 seconds
@@ -202,7 +205,6 @@ class _MainSectionState extends State<MainSection> {
         setState(() {
           // Remove the "Thinking..." message
           messages.removeWhere((msg) => msg['text'] == "Thinking...");
-
         });
       });
 
@@ -223,6 +225,7 @@ class _MainSectionState extends State<MainSection> {
       userHasInteracted = false; // Reset to initial state
       showResponse = false;
       responseText = '';
+      questionCount = 0; // Reset question count
     });
   }
 
@@ -469,75 +472,104 @@ class _MainSectionState extends State<MainSection> {
             ),
             Padding(
               padding: EdgeInsets.only(bottom: 40),
-              child: Container(
-                width: MediaQuery.of(context).size.width * 0.9,
-                height: 50,
-                decoration: BoxDecoration(
-                  color: Colors.black,
-                  border: Border.all(
-                    color: Colors.white,
-                    width: 2.0,
-                  ),
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                child: Stack(
-                  children: [
-                    Padding(
-                      padding: EdgeInsets.only(right: 80.0),
-                      child: TextField(
-                        controller: contentController,
-                        readOnly: contentController.text == 'Listening...',
-                        decoration: InputDecoration(
-                          hintText: 'Ask Your Doubt',
-                          hintStyle: TextStyle(color: Colors.white),
-                          border: InputBorder.none,
-                          contentPadding: EdgeInsets.symmetric(horizontal: 20),
-                        ),
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 15,
-                        ),
-                      ),
-                    ),
-                    Positioned(
-                      right: 48,
-                      child: IconButton(
-                        icon: Icon(Icons.camera_alt, color: Colors.white),
-                        onPressed: _openCamera,
-                      ),
-                    ),
-                    Positioned(
-                      right: 0,
-                      child: ValueListenableBuilder<bool>(
-                        valueListenable: isTextEmpty,
-                        builder: (context, isEmpty, child) {
-                          return IconButton(
-                            icon: Icon(
-                              isEmpty ? Icons.mic : Icons.send,
-                              color: Colors.white,
-                            ),
-                            onPressed: () {
-                              FocusScope.of(context).unfocus();
-                              if (isEmpty) {
-                                setState(() {
-                                  contentController.text = 'Listening...';
-                                });
-                                Future.delayed(Duration(seconds: 5), () {
-                                  setState(() {
-                                    contentController.text = '';
-                                  });
-                                });
-                              } else {
-                                handleSendButtonPress();
-                              }
-                            },
-                          );
+              child: questionCount >= maxQuestions
+                  ? SizedBox(
+                      width: MediaQuery.of(context).size.width *
+                          0.9, // 90% of screen width
+                      child: ElevatedButton(
+                        onPressed: () {
+                          // Add the action for the login button here
                         },
+                        child: Text(
+                          'Login',
+                          style: TextStyle(
+                              color: Colors.white), // Set text color to white
+                        ),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.black, // Background color
+                          side: BorderSide(
+                              color: Colors.white,
+                              width: 2.0), // Border color and width
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(
+                                20), // Adjust radius if needed
+                          ),
+                          padding: EdgeInsets.symmetric(
+                              vertical: 15), // Adjust padding if needed
+                        ),
+                      ),
+                    )
+                  : Container(
+                      width: MediaQuery.of(context).size.width * 0.9,
+                      height: 50,
+                      decoration: BoxDecoration(
+                        color: Colors.black,
+                        border: Border.all(
+                          color: Colors.white,
+                          width: 2.0,
+                        ),
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: Stack(
+                        children: [
+                          Padding(
+                            padding: EdgeInsets.only(right: 80.0),
+                            child: TextField(
+                              controller: contentController,
+                              readOnly:
+                                  contentController.text == 'Listening...',
+                              decoration: InputDecoration(
+                                hintText: 'Ask Your Doubt',
+                                hintStyle: TextStyle(color: Colors.white),
+                                border: InputBorder.none,
+                                contentPadding:
+                                    EdgeInsets.symmetric(horizontal: 20),
+                              ),
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 15,
+                              ),
+                            ),
+                          ),
+                          Positioned(
+                            right: 48,
+                            child: IconButton(
+                              icon: Icon(Icons.camera_alt, color: Colors.white),
+                              onPressed: _openCamera,
+                            ),
+                          ),
+                          Positioned(
+                            right: 0,
+                            child: ValueListenableBuilder<bool>(
+                              valueListenable: isTextEmpty,
+                              builder: (context, isEmpty, child) {
+                                return IconButton(
+                                  icon: Icon(
+                                    isEmpty ? Icons.mic : Icons.send,
+                                    color: Colors.white,
+                                  ),
+                                  onPressed: () {
+                                    FocusScope.of(context).unfocus();
+                                    if (isEmpty) {
+                                      setState(() {
+                                        contentController.text = 'Listening...';
+                                      });
+                                      Future.delayed(Duration(seconds: 5), () {
+                                        setState(() {
+                                          contentController.text = '';
+                                        });
+                                      });
+                                    } else {
+                                      handleSendButtonPress();
+                                    }
+                                  },
+                                );
+                              },
+                            ),
+                          ),
+                        ],
                       ),
                     ),
-                  ],
-                ),
-              ),
             ),
           ],
         ),
