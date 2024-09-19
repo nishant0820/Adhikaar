@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 import 'package:adhikaar/ChatHistoryScreen.dart';
+import 'package:adhikaar/LoginPage.dart';
 import 'package:adhikaar/SettingsPage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_tts/flutter_tts.dart';
@@ -478,7 +479,11 @@ class _MainSectionState extends State<MainSection> {
                           0.9, // 90% of screen width
                       child: ElevatedButton(
                         onPressed: () {
-                          // Add the action for the login button here
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => LoginPage()),
+                          );
                         },
                         child: Text(
                           'Login',
