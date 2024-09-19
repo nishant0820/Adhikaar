@@ -186,10 +186,24 @@ class _MainSectionState extends State<MainSection> {
         contentController.clear();
       });
 
-      // Add a delay of 10 seconds before processing the response
-      await Future.delayed(Duration(seconds: 10));
+      // Show "Thinking..." after 2 seconds
+      await Future.delayed(Duration(seconds: 2), () {
+        setState(() {
+          addMessageToList("Thinking...",
+              isUser: false); // Add "Thinking..." to the left side
+        });
+      });
 
-      speakThis(message);
+      // Replace "Thinking..." with the actual response after 3 seconds
+      await Future.delayed(Duration(seconds: 3), () {
+        speakThis(message);
+
+        setState(() {
+          // Remove the "Thinking..." message
+          messages.removeWhere((msg) => msg['text'] == "Thinking...");
+
+        });
+      });
 
       // Save the chat message to SharedPreferences
       final prefs = await SharedPreferences.getInstance();
