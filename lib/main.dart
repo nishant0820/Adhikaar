@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 import 'package:adhikaar/ChatHistoryScreen.dart';
+import 'package:adhikaar/SettingsPage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_tts/flutter_tts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -375,6 +376,10 @@ class _MainSectionState extends State<MainSection> {
               title: Text('Settings'),
               onTap: () {
                 Navigator.pop(context); // close the drawer
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => SettingsPage()),
+                );
               },
             ),
           ],
